@@ -1,4 +1,4 @@
-name: Pull Request Validation
+name: Pull Request
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -30,7 +30,7 @@ jobs:
         run: |
           uv run ruff check .
           uv run ruff format --check .
-          uv run pytest tests/ -v --cov=src
+          uv run pytest tests/ -v
 
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
