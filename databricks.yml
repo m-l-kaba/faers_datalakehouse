@@ -5,7 +5,8 @@ bundle:
   uuid: ec0d7b2d-9cfc-4c8b-af1c-a13bea9b7e4f
 
 variables:
-  workspace_host: https://adb-3957210876296948.8.azuredatabricks.net
+  databricks_host:
+    description: "Databricks workspace URL"
 
 include:
   - resources/*.yml
@@ -20,7 +21,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ${workspace_host}
+      host: ${databricks_host}
 
     presets:
       # Set dynamic_version: true on all artifacts of type "whl".
@@ -32,7 +33,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: ${workspace_host}
+      host: ${databricks_host}
       # We explicitly deploy to /Workspace/Users/m.leon.kaba@gmail.com to make sure we only have a single copy.
       root_path: /Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
     permissions:
