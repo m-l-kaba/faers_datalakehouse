@@ -10,8 +10,6 @@ targets:
   dev:
     mode: development
     default: true
-    workspace:
-      host: ${workspace.host}
 
     presets:
       artifacts_dynamic_version: true
