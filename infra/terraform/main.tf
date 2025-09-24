@@ -21,8 +21,8 @@ resource "azurerm_storage_account" "faerslakehouse" {
 }
 
 resource "azurerm_storage_container" "faers_data" {
-  name                  = "faers-data"
-  storage_account_name  = azurerm_storage_account.faerslakehouse.name
+  name                  = "faers-datalake"
+  storage_account_id    = azurerm_storage_account.faerslakehouse.id
   container_access_type = "private"
 }
 
@@ -52,9 +52,10 @@ resource "azurerm_databricks_access_connector" "uc" {
 # ==============================================================================
 
 resource "databricks_storage_credential" "faers_cred" {
-  name          = "faers-cred"
+  name          = "faers-sc"
   provider      = databricks.ws
   force_destroy = true
+  force_update  = true
   azure_managed_identity {
     access_connector_id = azurerm_databricks_access_connector.uc.id
   }
@@ -71,7 +72,7 @@ resource "azurerm_role_assignment" "uc_storage_rbac" {
 # ==============================================================================
 
 resource "databricks_external_location" "faers_ext_loc" {
-  name            = "faers-ext-loc"
+  name            = "faers-external-location"
   provider        = databricks.ws
   force_destroy   = true
   url             = "abfss://${azurerm_storage_container.faers_data.name}@${azurerm_storage_account.faerslakehouse.name}.dfs.core.windows.net/"
@@ -80,11 +81,12 @@ resource "databricks_external_location" "faers_ext_loc" {
 }
 
 resource "databricks_catalog" "faers_prod" {
-  provider     = databricks.ws
-  name         = "prod"
-  comment      = "Production catalog for FAERS data"
-  storage_root = "abfss://${azurerm_storage_container.faers_data.name}@${azurerm_storage_account.faerslakehouse.name}.dfs.core.windows.net/"
-  depends_on   = [databricks_external_location.faers_ext_loc]
+  provider      = databricks.ws
+  name          = "production"
+  comment       = "Production catalog for FAERS data"
+  storage_root  = "abfss://${azurerm_storage_container.faers_data.name}@${azurerm_storage_account.faerslakehouse.name}.dfs.core.windows.net/"
+  depends_on    = [databricks_external_location.faers_ext_loc]
+  force_destroy = true
 
 }
 
@@ -92,6 +94,24 @@ resource "databricks_catalog" "faers_prod" {
 # ==============================================================================
 # DATABRICKS SCHEMAS (BRONZE, SILVER, GOLD)
 # ==============================================================================
+
+resource "databricks_schema" "faers_landing" {
+  provider     = databricks.ws
+  name         = "landing"
+  catalog_name = databricks_catalog.faers_prod.name
+  comment      = "Landing schema for initial data ingestion"
+}
+
+resource "databricks_volume" "fears_landing_volume" {
+  provider         = databricks.ws
+  name             = "landing_volume"
+  volume_type      = "EXTERNAL"
+  schema_name      = databricks_schema.faers_landing.name
+  catalog_name     = databricks_catalog.faers_prod.name
+  storage_location = "abfss://${azurerm_storage_container.faers_data.name}@${azurerm_storage_account.faerslakehouse.name}.dfs.core.windows.net/landing/"
+  comment          = "Volume for landing schema"
+  depends_on       = [databricks_schema.faers_landing]
+}
 
 resource "databricks_schema" "faers_bronze" {
   provider     = databricks.ws
@@ -125,6 +145,8 @@ resource "databricks_grants" "prod_catalog" {
 
 }
 
+
+
 resource "databricks_grants" "external_location" {
   external_location = databricks_external_location.faers_ext_loc.name
   provider          = databricks.ws
@@ -133,6 +155,7 @@ resource "databricks_grants" "external_location" {
     privileges = ["ALL PRIVILEGES"]
   }
 }
+
 
 
 

@@ -5,6 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "databricks-connect>=17.2.0",
+    "pyspark>=4.0.1",
+    "pytest>=8.4.2",
+    "pyyaml>=6.0.2",
     "ruff>=0.13.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "."
+]
+testpaths = [
+    "tests"
 ]

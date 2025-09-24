@@ -1,0 +1,13 @@
+resources:
+  clusters:
+    dev:
+      num_workers: 0
+      node_type_id: "Standard_DS3_v2"
+      driver_node_type_id: "Standard_DS3_v2"
+      spark_version: "17.2.x-scala2.13"
+      autotermination_minutes: 20
+      spark_conf:
+        spark.databricks.cluster.profile: singleNode
+        spark.master: local[*]
+      custom_tags:
+        ResourceClass: SingleNode
