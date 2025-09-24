@@ -12,7 +12,6 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      BUNDLE_workspace_host: ${{ secrets.DATABRICKS_HOST }}
     steps:
       - uses: actions/checkout@v4
 
