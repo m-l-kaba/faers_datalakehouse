@@ -3,7 +3,7 @@ bundle:
   uuid: ec0d7b2d-9cfc-4c8b-af1c-a13bea9b7e4f
 
 variables:
-  databricks_host:
+  workspace_host:
     description: "Databricks workspace URL"
 
 include:
@@ -15,7 +15,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ${databricks_host}
+      host: ${workspace_host}
 
     presets:
       artifacts_dynamic_version: true
@@ -23,7 +23,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: ${databricks_host}
+      host: ${workspace_host}
       root_path: /Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
     permissions:
       - user_name: m.leon.kaba@gmail.com
