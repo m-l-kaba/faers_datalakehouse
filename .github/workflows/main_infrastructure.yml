@@ -4,8 +4,7 @@ on:
     branches: [main]
     paths:
       - "infra/**"
-      - ".github/workflows/main_infrastructure.yml
-
+      - ".github/workflows/main_infrastructure.yml"
 
 jobs:
   deploy-infrastructure:
