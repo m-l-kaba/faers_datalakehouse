@@ -9,10 +9,7 @@ on:
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
-    env:
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+    environment: dev
     steps:
       - uses: actions/checkout@v4
 
