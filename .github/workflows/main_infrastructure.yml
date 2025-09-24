@@ -22,7 +22,11 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          TF_VAR_azure_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          TF_VAR_azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          TF_VAR_azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
           TF_VAR_account_id: ${{ secrets.ACCOUNT_ID }}
+          TF_VAR_metastore_id: ${{ secrets.METASTORE_ID }}
         run: |
           terraform init -backend-config="storage_account_name=faerslakehouse" 
           terraform apply -auto-approve 
