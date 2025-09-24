@@ -2,10 +2,6 @@ bundle:
   name: faers_datalakehouse
   uuid: ec0d7b2d-9cfc-4c8b-af1c-a13bea9b7e4f
 
-variables:
-  workspace_host:
-    description: "Databricks workspace URL"
-
 include:
   - resources/*.yml
   - resources/*/*.yml
@@ -15,7 +11,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ${workspace_host}
+      host: ${workspace.host}
 
     presets:
       artifacts_dynamic_version: true
@@ -23,7 +19,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: ${workspace_host}
+      host: ${workspace.host}
       root_path: /Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
     permissions:
       - user_name: m.leon.kaba@gmail.com
