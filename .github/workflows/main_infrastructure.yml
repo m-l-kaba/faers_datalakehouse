@@ -28,6 +28,6 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_ENVIRONMENT: public
         run: |
-          terraform init 
-          terraform apply -auto-approve --backend-config="storage_account_name=faerslakehouse" 
+          terraform init -backend-config="storage_account_name=faerslakehouse" 
+          terraform apply -auto-approve 
           echo "✅ Successfully deployed infrastructure to development environment"
