@@ -29,5 +29,5 @@ jobs:
           ARM_ENVIRONMENT: public
         run: |
           terraform init 
-          terraform apply -auto-approve
+          terraform apply -auto-approve --backend-config="storage_account_name=faerslakehouse" 
           echo "✅ Successfully deployed infrastructure to development environment"
