@@ -145,7 +145,7 @@ resource "databricks_grants" "prod_catalog" {
   catalog  = databricks_catalog.faers_prod.name
   provider = databricks.ws
   grant {
-    principal  = "m.leon.kaba@gmail.com"
+    principal  = "account users"
     privileges = ["ALL PRIVILEGES"] # required to see the catalog
   }
 
@@ -157,7 +157,7 @@ resource "databricks_grants" "external_location" {
   external_location = databricks_external_location.faers_ext_loc.name
   provider          = databricks.ws
   grant {
-    principal  = "m.leon.kaba@gmail.com"
+    principal  = "account users"
     privileges = ["ALL PRIVILEGES"]
   }
 }
