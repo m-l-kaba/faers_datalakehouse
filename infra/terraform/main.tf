@@ -26,6 +26,12 @@ resource "azurerm_storage_container" "faers_data" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "faers_tfstate" {
+  name                  = "tfstate"
+  storage_account_id    = azurerm_storage_account.faerslakehouse.id
+  container_access_type = "private"
+}
+
 # ==============================================================================
 # DATABRICKS WORKSPACE AND ACCESS CONNECTOR
 # ==============================================================================

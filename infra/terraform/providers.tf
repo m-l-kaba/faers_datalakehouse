@@ -7,8 +7,12 @@ terraform {
       source = "databricks/databricks"
     }
   }
-  backend "local" {
-    path = "terraform.tfstate"
+  backend "azurerm" {
+    container_name = "tfstate"
+    client_id      = var.azure_client_id
+    client_secret  = var.azure_client_secret
+    tenant_id      = var.azure_tenant_id
+    key            = "terraform.tfstate"
   }
 }
 
