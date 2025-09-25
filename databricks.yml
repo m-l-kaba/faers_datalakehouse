@@ -7,14 +7,15 @@ include:
   - resources/*/*.yml
 
 targets:
-  dev:
+  development:
     mode: development
     default: true
-
+    workspace:
+      root_path: /Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
     presets:
       artifacts_dynamic_version: true
 
-  prod:
+  production:
     mode: production
     workspace:
       host: ${workspace.host}

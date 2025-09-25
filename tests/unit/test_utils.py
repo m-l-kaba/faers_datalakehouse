@@ -1,4 +1,4 @@
-from src.utils.utils import add_ingestion_metadata
+from src.utils.jobs import add_ingestion_metadata
 import pytest
 
 

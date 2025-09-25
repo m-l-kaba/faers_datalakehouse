@@ -96,6 +96,16 @@ resource "databricks_catalog" "faers_prod" {
 
 }
 
+resource "databricks_catalog" "faers_dev" {
+  provider      = databricks.ws
+  name          = "development"
+  comment       = "Development catalog for FAERS data"
+  storage_root  = "abfss://${azurerm_storage_container.faers_data.name}@${azurerm_storage_account.faerslakehouse.name}.dfs.core.windows.net/"
+  depends_on    = [databricks_external_location.faers_ext_loc]
+  force_destroy = true
+
+}
+
 
 # ==============================================================================
 # DATABRICKS SCHEMAS (BRONZE, SILVER, GOLD)
@@ -140,6 +150,29 @@ resource "databricks_schema" "faers_gold" {
   comment      = "Gold schema for aggregated data"
 }
 
+resource "databricks_schema" "fears_bronze_dev" {
+  provider     = databricks.ws
+  name         = "bronze"
+  catalog_name = databricks_catalog.faers_dev.name
+  comment      = "Bronze schema for raw data - dev"
+}
+
+resource "databricks_schema" "fears_silver_dev" {
+  provider     = databricks.ws
+  name         = "silver"
+  catalog_name = databricks_catalog.faers_dev.name
+  comment      = "Silver schema for cleaned data - dev"
+}
+
+resource "databricks_schema" "fears_gold_dev" {
+  provider     = databricks.ws
+  name         = "gold"
+  catalog_name = databricks_catalog.faers_dev.name
+  comment      = "Gold schema for aggregated data - dev"
+}
+
+
+
 
 resource "databricks_grants" "prod_catalog" {
   catalog  = databricks_catalog.faers_prod.name
@@ -151,6 +184,15 @@ resource "databricks_grants" "prod_catalog" {
 
 }
 
+resource "databricks_grants" "dev_catalog" {
+  catalog  = databricks_catalog.faers_dev.name
+  provider = databricks.ws
+  grant {
+    principal  = "account users"
+    privileges = ["ALL PRIVILEGES"] # required to see the catalog
+  }
+
+}
 
 
 resource "databricks_grants" "external_location" {

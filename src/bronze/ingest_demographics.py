@@ -1,16 +1,24 @@
 # Ingests the demographic data into the bronze layer\
+import os
+import sys
+
+sys.path.append("../")
+
 from pyspark.sql.types import StructType, StructField, StringType
 from databricks.connect import DatabricksSession
 from utils.config import load_config
-from utils.utils import initialize_bronze_job, add_ingestion_metadata
+from utils.jobs import initialize_job, add_ingestion_metadata
+from utils.logger import setup_logger
 
 config = load_config()
-
+target_catalog = os.getenv("target_catalog")
+src = config["bronze"]["volume_path"] + "/year=2025/quarter=1/DEMO25Q1.txt"
+logger = setup_logger("ingest_demographics")
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_bronze_job(spark)
-    src = config["bronze"]["volume_path"] + "/DEMO25Q1.txt"
+    initialize_job(spark, target_catalog, "bronze")
+    logger.info("Ingesting demographics data from %s", src)
 
     schema = StructType(
         [
@@ -53,4 +61,6 @@ if __name__ == "__main__":
 
     bronze = add_ingestion_metadata(df_raw)
 
+    logger.info("Writing demographics data to bronze layer")
     bronze.write.format("delta").mode("append").saveAsTable("demographics")
+    logger.info("Demographics data ingestion complete")

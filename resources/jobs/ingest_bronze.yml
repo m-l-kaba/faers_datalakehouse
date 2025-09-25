@@ -2,6 +2,7 @@ resources:
   jobs:
     ingest_bronze:
       name: ingest_bronze
+
       job_clusters:
         - job_cluster_key: "test"
           new_cluster:
@@ -12,9 +13,11 @@ resources:
             spark_conf:
               spark.databricks.cluster.profile: singleNode
               spark.master: local[*]
-
+            spark_env_vars:
+              target_catalog: ${bundle.target}
             custom_tags:
               ResourceClass: SingleNode
+            data_security_mode: "SINGLE_USER"
       tasks:
         - task_key: ingest_demographics
           spark_python_task:
