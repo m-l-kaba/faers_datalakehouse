@@ -23,11 +23,11 @@ resources:
           spark_python_task:
             python_file: "../../src/bronze/ingest_demographics.py"
           job_cluster_key: "bronze_cluster"
-        - task_key: ingest_drug
+        - task_key: ingest_drug_details
           spark_python_task:
-          python_file: "../../src/bronze/ingest_drug_details.py"
+            python_file: "../../src/bronze/ingest_drug_details.py"
           job_cluster_key: "bronze_cluster"
-        - task_key: ingest_indication
+        - task_key: ingest_indications
           spark_python_task:
             python_file: "../../src/bronze/ingest_indications.py"
           job_cluster_key: "bronze_cluster"
