@@ -4,7 +4,7 @@ resources:
       name: ingest_bronze
 
       job_clusters:
-        - job_cluster_key: "test"
+        - job_cluster_key: "bronze_cluster"
           new_cluster:
             spark_version: "17.2.x-scala2.13"
             node_type_id: "Standard_DS3_v2"
@@ -22,4 +22,28 @@ resources:
         - task_key: ingest_demographics
           spark_python_task:
             python_file: "../../src/bronze/ingest_demographics.py"
-          job_cluster_key: "test"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_drug
+          spark_python_task:
+          python_file: "../../src/bronze/ingest_drug_details.py"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_indication
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_indications.py"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_outcomes
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_outcomes.py"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_reactions
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_reactions.py"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_reports
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_reports.py"
+          job_cluster_key: "bronze_cluster"
+        - task_key: ingest_therapy_dates
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_therapy_dates.py"
+          job_cluster_key: "bronze_cluster"
