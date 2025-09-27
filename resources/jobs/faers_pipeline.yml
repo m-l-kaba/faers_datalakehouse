@@ -1,0 +1,108 @@
+resources:
+  jobs:
+    faers_pipeline:
+      name: faers_pipeline
+      description: "Complete FAERS data pipeline: Bronze ingestion followed by Silver transformations"
+
+      job_clusters:
+        - job_cluster_key: "pipeline_cluster"
+          new_cluster:
+            spark_version: "17.2.x-scala2.13"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 0
+            autotermination_minutes: 20
+            spark_conf:
+              spark.databricks.cluster.profile: singleNode
+              spark.master: local[*]
+            spark_env_vars:
+              target_catalog: ${bundle.target}
+            custom_tags:
+              ResourceClass: SingleNode
+            data_security_mode: "SINGLE_USER"
+
+      tasks:
+        # Bronze layer ingestion tasks
+        - task_key: ingest_demographics
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_demographics.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_drug_details
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_drug_details.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_indications
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_indications.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_outcomes
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_outcomes.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_reactions
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_reactions.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_reports
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_reports.py"
+          job_cluster_key: "pipeline_cluster"
+
+        - task_key: ingest_therapy_dates
+          spark_python_task:
+            python_file: "../../src/bronze/ingest_therapy_dates.py"
+          job_cluster_key: "pipeline_cluster"
+
+        # Silver layer transformation tasks (depend on bronze completion)
+        - task_key: silver_demographics
+          spark_python_task:
+            python_file: "../../src/silver/silver_demographics.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_demographics
+
+        - task_key: silver_drug_details
+          spark_python_task:
+            python_file: "../../src/silver/silver_drug_details.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_drug_details
+
+        - task_key: silver_indications
+          spark_python_task:
+            python_file: "../../src/silver/silver_indications.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_indications
+
+        - task_key: silver_outcomes
+          spark_python_task:
+            python_file: "../../src/silver/silver_outcomes.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_outcomes
+
+        - task_key: silver_reactions
+          spark_python_task:
+            python_file: "../../src/silver/silver_reactions.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_reactions
+
+        - task_key: silver_reports
+          spark_python_task:
+            python_file: "../../src/silver/silver_reports.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_reports
+
+        - task_key: silver_therapy_dates
+          spark_python_task:
+            python_file: "../../src/silver/silver_therapy_dates.py"
+          job_cluster_key: "pipeline_cluster"
+          depends_on:
+            - task_key: ingest_therapy_dates
