@@ -62,5 +62,7 @@ if __name__ == "__main__":
     bronze = add_ingestion_metadata(df_raw)
 
     logger.info("Writing demographics data to bronze layer")
-    bronze.write.format("delta").mode("append").saveAsTable("demographics")
+    bronze.write.format("delta").partitionBy("_ingest_ts").mode("append").saveAsTable(
+        "demographics"
+    )
     logger.info("Demographics data ingestion complete")

@@ -44,5 +44,7 @@ if __name__ == "__main__":
     bronze = add_ingestion_metadata(df_raw)
 
     logger.info("Writing therapy dates data to bronze layer")
-    bronze.write.format("delta").mode("append").saveAsTable("therapy_dates")
+    bronze.write.format("delta").partitionBy("_ingest_ts").mode("append").saveAsTable(
+        "therapy_dates"
+    )
     logger.info("Therapy dates data ingestion complete")
