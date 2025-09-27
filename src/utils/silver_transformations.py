@@ -18,7 +18,9 @@ from pyspark.sql.types import DoubleType
 from typing import List
 
 
-def read_latest_partition(spark: SparkSession, table_name: str) -> DataFrame:
+def read_latest_partition(
+    spark: SparkSession, table_name: str, schema: str = "bronze"
+) -> DataFrame:
     """
     Read only the latest partition from a bronze table based on _ingest_ts.
     Simple solution for incremental processing.
@@ -33,7 +35,7 @@ def read_latest_partition(spark: SparkSession, table_name: str) -> DataFrame:
     latest_partition = spark.sql(
         f"""
         SELECT MAX(_ingest_ts) as max_ingest_ts 
-        FROM {table_name}
+        FROM {schema}.{table_name}
     """
     ).collect()[0]["max_ingest_ts"]
 
