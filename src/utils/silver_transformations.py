@@ -32,6 +32,10 @@ def read_latest_partition(
     Returns:
         DataFrame with only the latest partition data
     """
+    print(spark.sql("show catalogs"))
+    print(spark.sql("show schemas"))
+    print(spark.sql("show tables"))
+
     latest_partition = spark.sql(
         f"""
         SELECT MAX(_ingest_ts) as max_ingest_ts 
