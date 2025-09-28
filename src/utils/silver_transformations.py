@@ -32,9 +32,6 @@ def read_latest_partition(
     Returns:
         DataFrame with only the latest partition data
     """
-    print(spark.sql("show catalogs"))
-    print(spark.sql("show schemas"))
-    print(spark.sql("show tables"))
 
     latest_partition = spark.sql(
         f"""
@@ -43,7 +40,9 @@ def read_latest_partition(
     """
     ).collect()[0]["max_ingest_ts"]
 
-    return spark.table(table_name).filter(col("_ingest_ts") == latest_partition)
+    return spark.table(f"{schema}/{table_name}").filter(
+        col("_ingest_ts") == latest_partition
+    )
 
 
 def standardize_date_fields(df: DataFrame, date_columns: List[str]) -> DataFrame:
