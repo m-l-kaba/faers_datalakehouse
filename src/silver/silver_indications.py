@@ -34,11 +34,6 @@ def transform_indications(spark) -> DataFrame:
         f"Read {df_bronze.count()} records from latest bronze indications partition"
     )
 
-    df_silver = df_bronze.withColumn(
-        "indi_pt_standardized",
-        F.upper(F.trim(F.regexp_replace(F.col("indi_pt"), r"[^\w\s]", " "))),
-    )
-
     df_silver = df_silver.withColumn(
         "therapeutic_area",
         F.when(

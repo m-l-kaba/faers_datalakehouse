@@ -54,18 +54,6 @@ def transform_drug_details(spark) -> DataFrame:
         .otherwise("Unknown"),
     )
 
-    df_silver = df_silver.withColumn(
-        "route_standardized",
-        F.when(F.upper(F.col("route")).contains("ORAL"), "Oral")
-        .when(F.upper(F.col("route")).contains("INTRAVENOUS"), "Intravenous")
-        .when(F.upper(F.col("route")).contains("INTRAMUSCULAR"), "Intramuscular")
-        .when(F.upper(F.col("route")).contains("SUBCUTANEOUS"), "Subcutaneous")
-        .when(F.upper(F.col("route")).contains("TOPICAL"), "Topical")
-        .when(F.upper(F.col("route")).contains("INHALATION"), "Inhalation")
-        .when(F.upper(F.col("route")).contains("UNKNOWN"), "Unknown")
-        .otherwise(F.initcap(F.col("route"))),
-    )
-
     df_silver = df_silver.withColumnsRenamed(
         {"primaryid": "primary_id", "caseid": "caseid"}
     )

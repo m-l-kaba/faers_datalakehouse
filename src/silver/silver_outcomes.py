@@ -70,13 +70,6 @@ def transform_outcomes(spark) -> DataFrame:
         .otherwise("Unknown"),
     )
 
-    df_silver = df_silver.withColumn(
-        "expedited_reporting_required",
-        F.when(
-            F.col("outc_cod").isin("DE", "LT", "HO", "DS", "CA", "RI"), True
-        ).otherwise(False),
-    )
-
     df_silver = df_silver.withColumnsRenamed(
         {"primaryid": "primary_id", "caseid": "caseid"}
     )

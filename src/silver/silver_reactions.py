@@ -35,11 +35,6 @@ def transform_reactions(spark) -> DataFrame:
         f"Read {df_bronze.count()} records from latest bronze reactions partition"
     )
 
-    df_silver = df_bronze.withColumn(
-        "pt_standardized",
-        F.upper(F.trim(F.regexp_replace(F.col("pt"), r"[^\w\s]", " "))),
-    )
-
     df_silver = df_silver.withColumn(
         "reaction_category",
         F.when(F.upper(F.col("pt")).contains("DEATH"), "Fatal")

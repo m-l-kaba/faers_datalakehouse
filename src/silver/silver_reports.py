@@ -29,13 +29,11 @@ def transform_reports(spark) -> DataFrame:
     """
     logger.info("Starting reports silver transformation")
 
-    # Read only the latest partition
     df_bronze = read_latest_partition(spark, "reports")
     logger.info(
         f"Read {df_bronze.count()} records from latest bronze reports partition"
     )
 
-    # Standardize reporter source codes with descriptions
     df_silver = df_bronze.withColumn(
         "reporter_source_description",
         F.when(F.col("rpsr_cod") == "HP", "Healthcare Professional")
@@ -46,7 +44,6 @@ def transform_reports(spark) -> DataFrame:
         .otherwise("Unspecified"),
     )
 
-    # Add reporter type category
     df_silver = df_silver.withColumn(
         "reporter_category",
         F.when(F.col("rpsr_cod") == "HP", "Professional")
@@ -67,7 +64,6 @@ def transform_reports(spark) -> DataFrame:
         .otherwise(1),  # Unknown - lowest reliability
     )
 
-    # Add regulatory priority flag (HP reports get higher priority)
     df_silver = df_silver.withColumn(
         "regulatory_priority",
         F.when(F.col("rpsr_cod") == "HP", "High")
@@ -75,7 +71,6 @@ def transform_reports(spark) -> DataFrame:
         .otherwise("Standard"),
     )
 
-    # Column renaming for consistency
     df_silver = df_silver.withColumnsRenamed(
         {"primaryid": "primary_id", "caseid": "caseid"}
     )
