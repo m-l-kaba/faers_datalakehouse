@@ -4,7 +4,9 @@ from pyspark.sql.dataframe import DataFrame
 from pyspark.sql import functions as F
 
 
-def initialize_job(spark: SparkSession, catalog: str, schema: Optional[str]) -> None:
+def initialize_job(
+    spark: SparkSession, catalog: str, schema: Optional[str] = None
+) -> None:
     spark.sql(f"USE CATALOG {catalog}")
     if schema:
         spark.sql(f"USE SCHEMA {schema}")
