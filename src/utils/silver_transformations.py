@@ -40,7 +40,7 @@ def read_latest_partition(
     """
     ).collect()[0]["max_ingest_ts"]
 
-    return spark.table(f"{schema}/{table_name}").filter(
+    return spark.table(f"{schema}.{table_name}").filter(
         col("_ingest_ts") == latest_partition
     )
 
