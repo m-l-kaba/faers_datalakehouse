@@ -67,24 +67,24 @@ def transform_therapy_dates(spark) -> DataFrame:
     df_silver = df_silver.withColumn(
         "reported_duration_days",
         F.when(
-            (F.col("dur_numeric").isNotNull()) & (F.col("dur_cod") == "YR"),
-            F.col("dur_numeric") * 365,
+            (F.col("dur").isNotNull()) & (F.col("dur_cod") == "YR"),
+            F.col("dur") * 365,
         )
         .when(
-            (F.col("dur_numeric").isNotNull()) & (F.col("dur_cod") == "MON"),
-            F.col("dur_numeric") * 30,
+            (F.col("dur").isNotNull()) & (F.col("dur_cod") == "MON"),
+            F.col("dur") * 30,
         )
         .when(
-            (F.col("dur_numeric").isNotNull()) & (F.col("dur_cod") == "WK"),
-            F.col("dur_numeric") * 7,
+            (F.col("dur").isNotNull()) & (F.col("dur_cod") == "WK"),
+            F.col("dur") * 7,
         )
         .when(
-            (F.col("dur_numeric").isNotNull()) & (F.col("dur_cod") == "DY"),
-            F.col("dur_numeric"),
+            (F.col("dur").isNotNull()) & (F.col("dur_cod") == "DY"),
+            F.col("dur"),
         )
         .when(
-            (F.col("dur_numeric").isNotNull()) & (F.col("dur_cod") == "HR"),
-            F.col("dur_numeric") / 24,
+            (F.col("dur").isNotNull()) & (F.col("dur_cod") == "HR"),
+            F.col("dur") / 24,
         )
         .otherwise(None),
     )
