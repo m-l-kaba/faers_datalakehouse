@@ -81,14 +81,14 @@ def transform_drug_details(spark) -> DataFrame:
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_job(spark, target_catalog, "silver")
+    initialize_job(spark, target_catalog)
 
     df_drug_details_silver = transform_drug_details(spark)
 
     logger.info("Writing drug details silver data")
 
-    df_drug_details_silver.write.mode("overwrite").saveAsTable("drug_details")
+    df_drug_details_silver.write.mode("overwrite").saveAsTable("silver.drug_details")
 
-    spark.sql("OPTIMIZE drug_details")
+    spark.sql("OPTIMIZE silver.drug_details")
 
     logger.info("Drug details silver transformation complete")

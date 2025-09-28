@@ -90,14 +90,14 @@ def transform_outcomes(spark) -> DataFrame:
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_job(spark, target_catalog, "silver")
+    initialize_job(spark, target_catalog)
 
     df_outcomes_silver = transform_outcomes(spark)
 
     logger.info("Writing outcomes silver data")
 
-    df_outcomes_silver.write.mode("overwrite").saveAsTable("outcomes_silver")
+    df_outcomes_silver.write.mode("overwrite").saveAsTable("silver.outcomes")
 
-    spark.sql("OPTIMIZE outcomes_silver")
+    spark.sql("OPTIMIZE silver.outcomes")
 
     logger.info("Outcomes silver transformation complete")

@@ -174,14 +174,14 @@ def transform_reactions(spark) -> DataFrame:
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_job(spark, target_catalog, "silver")
+    initialize_job(spark, target_catalog)
 
     df_reactions_silver = transform_reactions(spark)
 
     logger.info("Writing reactions silver data")
 
-    df_reactions_silver.write.mode("overwrite").saveAsTable("reactions_silver")
+    df_reactions_silver.write.mode("overwrite").saveAsTable("silver.reactions")
 
-    spark.sql("OPTIMIZE reactions_silver")
+    spark.sql("OPTIMIZE silver.reactions")
 
     logger.info("Reactions silver transformation complete")

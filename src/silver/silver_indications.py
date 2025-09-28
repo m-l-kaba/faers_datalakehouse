@@ -133,14 +133,14 @@ def transform_indications(spark) -> DataFrame:
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_job(spark, target_catalog, "silver")
+    initialize_job(spark, target_catalog)
 
     df_indications_silver = transform_indications(spark)
 
     logger.info("Writing indications silver data")
 
-    df_indications_silver.write.mode("overwrite").saveAsTable("indications_silver")
+    df_indications_silver.write.mode("overwrite").saveAsTable("silver.indications")
 
-    spark.sql("OPTIMIZE indications_silver")
+    spark.sql("OPTIMIZE silver.indications")
 
     logger.info("Indications silver transformation complete")

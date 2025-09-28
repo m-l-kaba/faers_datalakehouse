@@ -82,14 +82,14 @@ def transform_demographics(spark) -> DataFrame:
 
 if __name__ == "__main__":
     spark = DatabricksSession.builder.getOrCreate()
-    initialize_job(spark, target_catalog, "silver")
+    initialize_job(spark, target_catalog)
 
     df_demographics_silver = transform_demographics(spark)
 
     logger.info("Writing demographics silver data")
 
-    df_demographics_silver.write.mode("overwrite").saveAsTable("demographics")
+    df_demographics_silver.write.mode("overwrite").saveAsTable("silver.demographics")
 
-    spark.sql("OPTIMIZE demographics_silver")
+    spark.sql("OPTIMIZE silver.demographics")
 
     logger.info("Demographics silver transformation complete")

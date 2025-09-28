@@ -1,13 +1,13 @@
+from typing import Optional
 from pyspark.sql import SparkSession
 from pyspark.sql.dataframe import DataFrame
 from pyspark.sql import functions as F
 
 
-def initialize_job(
-    spark: SparkSession, catalog: str = "development", schema: str = "bronze"
-) -> None:
+def initialize_job(spark: SparkSession, catalog: str, schema: Optional[str]) -> None:
     spark.sql(f"USE CATALOG {catalog}")
-    spark.sql(f"USE SCHEMA {schema}")
+    if schema:
+        spark.sql(f"USE SCHEMA {schema}")
 
 
 def add_ingestion_metadata(df_raw: DataFrame) -> DataFrame:
