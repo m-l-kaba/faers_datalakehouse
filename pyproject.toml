@@ -1,7 +1,7 @@
 [project]
 name = "faers-datalakehouse"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "A complete end-to-end data lakehouse solution for FAERS data using Databricks and Delta Lake."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

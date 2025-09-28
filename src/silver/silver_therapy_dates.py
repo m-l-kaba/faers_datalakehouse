@@ -59,8 +59,8 @@ def transform_therapy_dates(spark) -> DataFrame:
     df_silver = df_silver.withColumn(
         "therapy_duration_days",
         F.when(
-            (F.col("start_dt").isNotNull()) & (F.col("end_dt_parsed").isNotNull()),
-            F.datediff(F.col("end_dt_parsed"), F.col("start_dt")),
+            (F.col("start_dt").isNotNull()) & (F.col("end_dt").isNotNull()),
+            F.datediff(F.col("end_dt"), F.col("start_dt")),
         ).otherwise(None),
     )
 
@@ -92,11 +92,11 @@ def transform_therapy_dates(spark) -> DataFrame:
     df_silver = df_silver.withColumn(
         "therapy_status",
         F.when(
-            (F.col("start_dt").isNotNull()) & (F.col("end_dt_parsed").isNotNull()),
+            (F.col("start_dt").isNotNull()) & (F.col("end_dt").isNotNull()),
             "Completed",
         )
         .when(
-            (F.col("start_dt").isNotNull()) & (F.col("end_dt_parsed").isNull()),
+            (F.col("start_dt").isNotNull()) & (F.col("end_dt").isNull()),
             "Ongoing",
         )
         .when(F.col("start_dt").isNull(), "Unknown Start")
