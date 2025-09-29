@@ -2,22 +2,23 @@ resources:
   jobs:
     faers_pipeline:
       name: faers_pipeline
-      description: "Complete FAERS data pipeline: Bronze ingestion followed by Silver transformations"
+      description: "Complete FAERS data lakehouse pipeline: Bronze ingestion → Silver transformations → Gold dimensional modeling"
 
       job_clusters:
         - job_cluster_key: "pipeline_cluster"
           new_cluster:
             spark_version: "17.2.x-scala2.13"
             node_type_id: "Standard_DS3_v2"
-            num_workers: 0
-            autotermination_minutes: 20
+            num_workers: 2
+            autotermination_minutes: 30
             spark_conf:
-              spark.databricks.cluster.profile: singleNode
-              spark.master: local[*]
+              "spark.databricks.delta.autoCompact.enabled": "true"
+              "spark.databricks.delta.optimizeWrite.enabled": "true"
+              "spark.sql.adaptive.enabled": "true"
+              "spark.sql.adaptive.coalescePartitions.enabled": "true"
+              "spark.sql.adaptive.skewJoin.enabled": "true"
             spark_env_vars:
               target_catalog: ${bundle.target}
-            custom_tags:
-              ResourceClass: SingleNode
             data_security_mode: "SINGLE_USER"
 
       tasks:
@@ -52,7 +53,7 @@ resources:
             python_file: "../../src/bronze/ingest_reports.py"
           job_cluster_key: "pipeline_cluster"
 
-        - task_key: ingest_therapy_dates
+        - task_key: ingest_therapy_durations
           spark_python_task:
             python_file: "../../src/bronze/ingest_therapy_dates.py"
           job_cluster_key: "pipeline_cluster"
@@ -100,9 +101,103 @@ resources:
           depends_on:
             - task_key: ingest_reports
 
-        - task_key: silver_therapy_dates
+        - task_key: silver_therapy_durations
           spark_python_task:
             python_file: "../../src/silver/silver_therapy_dates.py"
           job_cluster_key: "pipeline_cluster"
           depends_on:
-            - task_key: ingest_therapy_dates
+            - task_key: ingest_therapy_durations
+
+        # Gold layer dimension tasks (depend on silver completion)
+        - task_key: gold_dim_date
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_date.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 3600
+          depends_on:
+            - task_key: silver_demographics
+            - task_key: silver_drug_details
+            - task_key: silver_indications
+            - task_key: silver_outcomes
+            - task_key: silver_reactions
+            - task_key: silver_reports
+            - task_key: silver_therapy_durations
+
+        - task_key: gold_dim_patient
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_patient.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_demographics
+
+        - task_key: gold_dim_drug
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_drug.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_drug_details
+
+        - task_key: gold_dim_report
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_report.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 3600
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_reports
+
+        - task_key: gold_dim_reaction
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_reaction.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_reactions
+
+        - task_key: gold_dim_indication
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_indication.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_indications
+
+        - task_key: gold_dim_therapy
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_therapy.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_therapy_durations
+
+        - task_key: gold_dim_outcome
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_outcome.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: silver_outcomes
+
+        # Gold layer fact table (depends on all dimensions being complete)
+        - task_key: gold_fact_adverse_events
+          spark_python_task:
+            python_file: "../../src/gold/facts/fact_adverse_events.py"
+          job_cluster_key: "pipeline_cluster"
+          timeout_seconds: 7200
+          depends_on:
+            - task_key: gold_dim_date
+            - task_key: gold_dim_patient
+            - task_key: gold_dim_drug
+            - task_key: gold_dim_report
+            - task_key: gold_dim_reaction
+            - task_key: gold_dim_indication
+            - task_key: gold_dim_therapy
+            - task_key: gold_dim_outcome

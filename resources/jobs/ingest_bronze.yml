@@ -43,7 +43,7 @@ resources:
           spark_python_task:
             python_file: "../../src/bronze/ingest_reports.py"
           job_cluster_key: "bronze_cluster"
-        - task_key: ingest_therapy_dates
+        - task_key: ingest_therapy_durations
           spark_python_task:
             python_file: "../../src/bronze/ingest_therapy_dates.py"
           job_cluster_key: "bronze_cluster"

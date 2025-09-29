@@ -1,0 +1,83 @@
+resources:
+  jobs:
+    process_gold_dimensions:
+      name: process_gold_dimensions
+
+      job_clusters:
+        - job_cluster_key: "gold_cluster"
+          new_cluster:
+            spark_version: "17.2.x-scala2.13"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 2
+            autotermination_minutes: 20
+            spark_conf:
+              "spark.databricks.delta.autoCompact.enabled": "true"
+              "spark.databricks.delta.optimizeWrite.enabled": "true"
+              "spark.sql.adaptive.enabled": "true"
+              "spark.sql.adaptive.coalescePartitions.enabled": "true"
+            spark_env_vars:
+              target_catalog: ${bundle.target}
+            data_security_mode: "SINGLE_USER"
+
+      tasks:
+        - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_date.py"
+          timeout_seconds: 3600
+
+        - task_key: gold_dim_patient
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_patient.py"
+          timeout_seconds: 7200
+
+        - task_key: gold_dim_drug
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_drug.py"
+          timeout_seconds: 7200
+
+        - task_key: gold_dim_report
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_report.py"
+          timeout_seconds: 3600
+
+        - task_key: gold_dim_reaction
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_reaction.py"
+          timeout_seconds: 7200
+
+        - task_key: gold_dim_indication
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_indication.py"
+          timeout_seconds: 7200
+
+        - task_key: gold_dim_therapy
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_therapy.py"
+          timeout_seconds: 7200
+
+        - task_key: gold_dim_outcome
+          depends_on:
+            - task_key: gold_dim_date
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/dims/dim_outcome.py"
+          timeout_seconds: 7200

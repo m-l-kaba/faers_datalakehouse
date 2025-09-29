@@ -1,4 +1,4 @@
-# Ingests the demographic data into the bronze layer\
+# Ingests the demographic data into the bronze layer
 import os
 import sys
 

@@ -1,0 +1,28 @@
+resources:
+  jobs:
+    process_gold_facts:
+      name: process_gold_facts
+
+      job_clusters:
+        - job_cluster_key: "gold_cluster"
+          new_cluster:
+            spark_version: "17.2.x-scala2.13"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 2
+            autotermination_minutes: 20
+            spark_conf:
+              "spark.sql.adaptive.enabled": "true"
+              "spark.sql.adaptive.coalescePartitions.enabled": "true"
+              "spark.sql.adaptive.skewJoin.enabled": "true"
+              "spark.databricks.delta.autoCompact.enabled": "true"
+              "spark.databricks.delta.optimizeWrite.enabled": "true"
+            spark_env_vars:
+              target_catalog: ${bundle.target}
+            data_security_mode: "SINGLE_USER"
+
+      tasks:
+        - task_key: gold_fact_adverse_events
+          job_cluster_key: "gold_cluster"
+          spark_python_task:
+            python_file: "../../src/gold/facts/fact_adverse_events.py"
+          timeout_seconds: 3600

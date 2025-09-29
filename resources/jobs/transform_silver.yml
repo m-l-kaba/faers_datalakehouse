@@ -50,7 +50,7 @@ resources:
             python_file: "../../src/silver/silver_reports.py"
           job_cluster_key: "silver_cluster"
 
-        - task_key: silver_therapy_dates
+        - task_key: silver_therapy_durations
           spark_python_task:
             python_file: "../../src/silver/silver_therapy_dates.py"
           job_cluster_key: "silver_cluster"
