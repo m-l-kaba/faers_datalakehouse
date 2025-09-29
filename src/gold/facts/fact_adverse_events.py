@@ -212,7 +212,7 @@ def create_fact_adverse_events(spark) -> DataFrame:
         .alias("reporter_reliability_score"),
         F.col("age").cast(IntegerType()).alias("patient_age"),
         F.col("wt").cast(DecimalType(8, 2)).alias("patient_weight"),
-        F.col("dose_amt").cast(DecimalType(10, 4)).alias("drug_dose_amount"),
+        F.col("dose_amt").cast(DecimalType(15, 4)).alias("drug_dose_amount"),
         F.when(F.col("dur_cod") == "DAY", F.col("dur"))
         .when(F.col("dur_cod") == "WK", F.col("dur") * 7)
         .when(F.col("dur_cod") == "MON", F.col("dur") * 30)

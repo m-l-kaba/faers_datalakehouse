@@ -11,6 +11,7 @@ terraform {
     container_name      = "tfstate"
     key                 = "terraform.tfstate"
     resource_group_name = "faers-lakehouse-rg"
+    storage_account_name = "faerslakehouse"
   }
 }
 
@@ -18,30 +19,18 @@ provider "azurerm" {
   features {}
 }
 
-provider "databricks" {
-  alias               = "ws"
-  host                = local.databricks_workspace_host
-  azure_client_id     = var.azure_client_id     # Application (client) ID
-  azure_client_secret = var.azure_client_secret # Client secret value
-  azure_tenant_id     = var.azure_tenant_id     # Directory (tenant) ID
-
-}
-
+# Account level provider for initial setup
 provider "databricks" {
   alias      = "adm"
-  host       = local.databricks_accounts_host
+  host       = "https://accounts.azuredatabricks.net"
   account_id = var.account_id
-  #   azure_client_id     = var.azure_client_id     # Application (client) ID
-  #   azure_client_secret = var.azure_client_secret # Client secret value
-  #   azure_tenant_id     = var.azure_tenant_id     # Directory (tenant) ID
 }
 
-data "azurerm_databricks_workspace" "faers_databricks_ws" {
-  name                = azurerm_databricks_workspace.fears_databricks_ws.name
-  resource_group_name = azurerm_resource_group.faers_lakehouse_rg.name
-}
-
-locals {
-  databricks_workspace_host = data.azurerm_databricks_workspace.faers_databricks_ws.workspace_url
-  databricks_accounts_host  = "https://accounts.azuredatabricks.net"
+# Workspace level provider - uses Azure authentication
+provider "databricks" {
+  alias               = "ws"
+  azure_workspace_resource_id = "/subscriptions/ecb989f5-517b-4269-8395-1da237c7293c/resourceGroups/faers-lakehouse-rg/providers/Microsoft.Databricks/workspaces/faers-databricks-ws"
+  azure_client_id     = var.azure_client_id
+  azure_client_secret = var.azure_client_secret
+  azure_tenant_id     = var.azure_tenant_id
 }

@@ -33,4 +33,4 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         run: |
           databricks bundle deploy --target development
-          echo "✅ Successfully deployed to development environment"
+          echo "Successfully deployed to development environment"

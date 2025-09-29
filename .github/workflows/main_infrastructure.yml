@@ -30,4 +30,4 @@ jobs:
         run: |
           terraform init -backend-config="storage_account_name=faerslakehouse" 
           terraform apply -auto-approve 
-          echo "✅ Successfully deployed infrastructure to development environment"
+          echo "Successfully deployed infrastructure to development environment"
