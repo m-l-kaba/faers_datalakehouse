@@ -18,8 +18,4 @@ targets:
   production:
     mode: production
     workspace:
-      host: ${workspace.host}
-      root_path: /Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
-    permissions:
-      - user_name: m.leon.kaba@gmail.com
-        level: CAN_MANAGE
+      root_path: ~/Workspace/Users/m.leon.kaba@gmail.com/.bundle/${bundle.name}/${bundle.target}
