@@ -385,31 +385,6 @@ When a tag is created on the main branch:
 - **Permissions**: Developer access with full control for experimentation
 - **Testing**: Integration testing and end-to-end pipeline validation
 
-#### **Production Environment**
-
-- **Purpose**: Live business operations and analytics
-- **Deployment Trigger**: Automatic deployment when tag is created on main branch
-- **Data**: Full production datasets with proper governance
-- **Compute**: High-availability multi-node clusters with auto-scaling
-- **Permissions**: Strict role-based access control with audit logging
-- **Monitoring**: 24/7 monitoring with automated alerting and incident response
-
-## Performance Optimizations
-
-- **Delta Lake Optimizations**: Auto-compaction and optimize writes
-- **Adaptive Query Execution**: Spark AQE enabled
-- **Partitioning Strategy**: Optimal partition sizes
-- **Cluster Configuration**: Right-sized clusters with auto-termination
-- **Caching Strategy**: Strategic DataFrame caching
-
-## Security & Governance
-
-- **Unity Catalog**: Complete data governance
-- **Row-Level Security**: Fine-grained access control
-- **Data Lineage**: Full traceability
-- **Audit Logging**: Comprehensive activity tracking
-- **Encryption**: Data at rest and in transit
-
 ## Business Value
 
 This lakehouse enables:
