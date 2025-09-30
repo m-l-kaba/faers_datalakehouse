@@ -418,7 +418,7 @@ This is a portfolio project demonstrating data engineering best practices. The c
 **Mory Leon Kaba**  
 Data Engineer | Cloud Solutions Architect
 
-- Email: m.leon.kaba@gmail.com
+- Email: info@neoinsights.de
 - LinkedIn: [linkedin.com/in/mory-leon-kaba](https://www.linkedin.com/in/mory-kaba-80b5641a0)
 
 ---
